@@ -1,16 +1,29 @@
-FROM node:18.15.0-alpine
+FROM node:14-alpine as builder
 
-RUN apk add --no-cache bash
-RUN npm i -g @nestjs/cli typescript ts-node
+ENV NODE_ENV build
 
-COPY package*.json /tmp/app/
-RUN cd /tmp/app && npm install
+RUN npm i -g @nestjs/cli typescript ts-node rimraf
 
-COPY . /usr/src/app
-RUN cp -a /tmp/app/node_modules /usr/src/app
+USER node
+WORKDIR /home/node
 
-WORKDIR /usr/src/app
-RUN cp env-example .env
-RUN npm run build
+COPY . /home/node
 
-CMD ["/opt/startup.dev.sh"]
+RUN npm ci \
+    && npm run build \
+    && npm prune --production
+
+# ---
+
+FROM node:14-alpine
+
+ENV NODE_ENV production
+
+USER node
+WORKDIR /home/node
+
+COPY --from=builder /home/node/package*.json /home/node/
+COPY --from=builder /home/node/node_modules/ /home/node/node_modules/
+COPY --from=builder /home/node/dist/ /home/node/dist/
+
+CMD ["node", "dist/server.js"]
