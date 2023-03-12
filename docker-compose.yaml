@@ -3,5 +3,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    env_file:
+      - .env
     ports:
-      - ${APP_PORT}:${APP_PORT}
+      - 3000:3000
+      - 9229:9229

@@ -10,12 +10,10 @@ import fileConfig from './config/file.config';
 import facebookConfig from './config/facebook.config';
 import googleConfig from './config/google.config';
 import twitterConfig from './config/twitter.config';
-import appleConfig from './config/apple.config';
 import * as path from 'path';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthAppleModule } from './auth-apple/auth-apple.module';
 import { AuthFacebookModule } from './auth-facebook/auth-facebook.module';
 import { AuthGoogleModule } from './auth-google/auth-google.module';
 import { AuthTwitterModule } from './auth-twitter/auth-twitter.module';
@@ -41,7 +39,6 @@ import { DataSource } from 'typeorm';
         facebookConfig,
         googleConfig,
         twitterConfig,
-        appleConfig,
       ],
       envFilePath: ['.env'],
     }),
@@ -78,7 +75,6 @@ import { DataSource } from 'typeorm';
     AuthFacebookModule,
     AuthGoogleModule,
     AuthTwitterModule,
-    AuthAppleModule,
     ForgotModule,
     MailModule,
     HomeModule,
