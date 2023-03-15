@@ -3,5 +3,4 @@ export enum AuthProvidersEnum {
   facebook = 'facebook',
   google = 'google',
   twitter = 'twitter',
-  apple = 'apple',
 }

@@ -26,8 +26,8 @@ async function bootstrap() {
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
   const options = new DocumentBuilder()
-    .setTitle('API')
-    .setDescription('API docs')
+    .setTitle('LEGO-shop API')
+    .setDescription('API documentation for e-shop')
     .setVersion('1.0')
     .addBearerAuth()
     .build();
