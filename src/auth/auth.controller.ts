@@ -27,7 +27,8 @@ import { AuthRegisterLoginDto } from './dto/auth-register-login.dto';
   version: '1',
 })
 export class AuthController {
-  constructor(public service: AuthService) {}
+  constructor(public service: AuthService) {
+  }
 
   @SerializeOptions({
     groups: ['me'],

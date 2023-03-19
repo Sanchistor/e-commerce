@@ -19,38 +19,14 @@ import {AuthGuard} from "@nestjs/passport";
 import {RolesGuard} from "../roles/roles.guard";
 
 
-@ApiTags('Order')
-@Controller('order')
-export class OrderController {
+@ApiTags('Order-Admin')
+@Controller('order-admin')
+export class OrderAdminController {
   constructor(
     private readonly orderService: OrderService,
     private readonly usersService: UsersService,
     private readonly authService: AuthService,
   ) {
-    console.log('init')
-  }
-
-  @Post()
-  async create(@Body() createOrderDto: CreateOrderDto) {
-    let user = await this.usersService.findOne({
-      email: createOrderDto.email,
-    });
-    let password = null;
-    if (!user) {
-      password = Math.random().toString(36).slice(-8);
-      const { name, surname, email } = createOrderDto;
-      const newUser = {
-        email: email,
-        password: password,
-        firstName: name,
-        lastName: surname,
-      };
-      user = await this.authService.register(newUser);
-    }
-    return {
-      ...(await this.orderService.create(createOrderDto, user)),
-      password,
-    };
   }
 
   @ApiBearerAuth()
@@ -70,21 +46,15 @@ export class OrderController {
   }
 
   @ApiBearerAuth()
-  @UseGuards(AuthGuard('jwt'))
+  @Roles(RoleEnum.admin)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Patch(':id')
   async update(
     @Param('id') id: string,
     @Body() updateOrderDto: UpdateOrderDto,
     @Req() req: any,
   ) {
-    //return await this.orderService.update(id, updateOrderDto);
-  }
-
-  @ApiBearerAuth()
-  @Get('/findOrdersOfUser')
-  async findOrdersOfUser(@Req() req: any) {
-    console.log(545);
-    return await this.orderService.findOrdersOfUser(req.user.id);
+    return await this.orderService.update(id, updateOrderDto);
   }
 
   @ApiBearerAuth()

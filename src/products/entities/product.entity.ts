@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { Category } from '../../categories/entities/category.entity';
 import { ProductAttributesToProductsEntity } from './product-attributes-to-products.entity';
+import {ProductOrder} from "../../order/entities/product-order.entity";
 
 @Entity()
 export class Product {
@@ -47,4 +48,7 @@ export class Product {
     (productToAttribute) => productToAttribute.product,
   )
   productToAttribute: ProductAttributesToProductsEntity[];
+
+  @OneToMany(() => ProductOrder, (order) => order.product)
+  orderToProduct: ProductOrder[];
 }

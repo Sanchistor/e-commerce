@@ -10,7 +10,9 @@ export class ProductAttributesToProductsEntity {
   @Column()
   value: string;
 
-  @ManyToOne(() => Product, (product) => product.productToAttribute)
+  @ManyToOne(() => Product, (product) => product.productToAttribute, {
+    onDelete: 'CASCADE',
+  })
   product: Product;
 
   @ManyToOne(

@@ -10,6 +10,7 @@ import {
   UpdateDateColumn,
   BeforeInsert,
   BeforeUpdate,
+  OneToMany,
 } from 'typeorm';
 import { Role } from '../../roles/entities/role.entity';
 import { Status } from '../../statuses/entities/status.entity';
@@ -18,6 +19,7 @@ import * as bcrypt from 'bcryptjs';
 import { EntityHelper } from 'src/utils/entity-helper';
 import { AuthProvidersEnum } from 'src/auth/auth-providers.enum';
 import { Exclude, Expose } from 'class-transformer';
+import { Order } from '../../order/entities/order.entity';
 
 @Entity()
 export class User extends EntityHelper {
@@ -85,6 +87,9 @@ export class User extends EntityHelper {
   @Index()
   @Exclude({ toPlainOnly: true })
   hash: string | null;
+
+  @OneToMany(() => Order, (order) => order.user)
+  order: Order[];
 
   @CreateDateColumn()
   createdAt: Date;
