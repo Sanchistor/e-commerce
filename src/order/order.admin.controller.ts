@@ -52,7 +52,6 @@ export class OrderAdminController {
   async update(
     @Param('id') id: string,
     @Body() updateOrderDto: UpdateOrderDto,
-    @Req() req: any,
   ) {
     return await this.orderService.update(id, updateOrderDto);
   }

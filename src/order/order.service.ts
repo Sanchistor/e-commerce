@@ -1,11 +1,11 @@
-import {Injectable, NotFoundException} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Order } from './entities/order.entity';
-import {ProductOrder} from "./entities/product-order.entity";
-import {User} from "../users/entities/user.entity";
+import { ProductOrder } from './entities/product-order.entity';
+import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class OrderService {
@@ -40,6 +40,18 @@ export class OrderService {
       .getMany();
   }
 
+  async getOrder(id: string) {
+    return await this.orderRepository
+      .createQueryBuilder('order')
+      .leftJoinAndSelect('order.productToOrder', 'product_to_order')
+      .where('order.id = :id', { id })
+      .getOne();
+  }
+
+  async deleteOrderProducts(product) {
+    return await this.productOrderRepository.delete({ id: product.id });
+  }
+
   async findOne(id: string) {
     return await this.orderRepository
       .createQueryBuilder('order')
@@ -50,6 +62,22 @@ export class OrderService {
   }
 
   async update(id: string, updateOrderDto: UpdateOrderDto) {
+    const orderData = await this.getOrder(id);
+
+    //delete product of order if it does not exist anymore
+    if (orderData.productToOrder) {
+      const filteredData = orderData.productToOrder.filter(
+        (product) =>
+          !updateOrderDto.productToOrder.find(
+            (updateProduct) => updateProduct.id === product.id,
+          ),
+      );
+      for (const deletedItem of filteredData) {
+        await this.deleteOrderProducts(deletedItem);
+      }
+    }
+
+    //save updated order
     const product = updateOrderDto.productToOrder;
     const order = await this.orderRepository.preload({
       id,
@@ -60,14 +88,12 @@ export class OrderService {
       throw new NotFoundException(`There is no order under id ${id}`);
     }
     const savedOrder = await this.orderRepository.save(order);
-    // for (const item of product) {
-    //   await this.productOrderRepository.save({
-    //     ...item,
-    //     order: savedOrder,
-    //   });
-    // }
-
-    //TODO: Save productsOfOrder
+    for (const item of product) {
+      await this.productOrderRepository.save({
+        ...item,
+        order: savedOrder,
+      });
+    }
   }
 
   async findMyOrders(userId: number) {

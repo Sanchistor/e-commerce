@@ -61,6 +61,22 @@ export class ProductsService {
   }
 
   async update(id: string, updateProductDto: UpdateProductDto) {
+    const productData = await this.findOne(id);
+
+    //delete attributes of product if they do not exist anymore
+    if (productData.productToAttribute) {
+      const filteredData = productData.productToAttribute.filter(
+        (product) =>
+          !updateProductDto.productToAttribute.find(
+            (updateProduct) => updateProduct.id === product.id,
+          ),
+      );
+      for (const deletedItem of filteredData) {
+        await this.deleteAttributesOfProduct(deletedItem);
+      }
+    }
+
+    //save product with attributes and categories
     const attributes = updateProductDto.productToAttribute;
     const product = await this.productRepository.preload({
       id,
@@ -82,5 +98,9 @@ export class ProductsService {
   async remove(id: string) {
     const product = await this.productRepository.findOne({ where: { id } });
     return await this.productRepository.remove(product);
+  }
+
+  async deleteAttributesOfProduct(attribute) {
+    return await this.productAttributesRepository.delete({ id: attribute.id });
   }
 }
