@@ -2,7 +2,7 @@ import {
   Controller,
   Get,
   Param,
-  Post,
+  Post, Query, Req,
   Response,
   UploadedFile,
   UseGuards,
@@ -13,6 +13,8 @@ import { ApiBearerAuth, ApiBody, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { FilesService } from './files.service';
 
+@ApiBearerAuth()
+@UseGuards(AuthGuard('jwt'))
 @ApiTags('Files')
 @Controller({
   path: 'files',
@@ -21,8 +23,6 @@ import { FilesService } from './files.service';
 export class FilesController {
   constructor(private readonly filesService: FilesService) {}
 
-  @ApiBearerAuth()
-  @UseGuards(AuthGuard('jwt'))
   @Post('upload')
   @ApiConsumes('multipart/form-data')
   @ApiBody({
@@ -39,10 +39,5 @@ export class FilesController {
   @UseInterceptors(FileInterceptor('file'))
   async uploadFile(@UploadedFile() file) {
     return this.filesService.uploadFile(file);
-  }
-
-  @Get(':path')
-  download(@Param('path') path, @Response() response) {
-    return response.sendFile(path, { root: './files' });
   }
 }

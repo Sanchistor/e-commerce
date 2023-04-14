@@ -9,11 +9,6 @@ export class UpdateProductDto {
   @IsString()
   name: string;
 
-  @ApiProperty({ example: '#637577' })
-  @IsOptional()
-  @IsString()
-  vendorCode: string;
-
   @ApiProperty({ example: '7577' })
   @IsOptional()
   @IsString()
@@ -23,11 +18,6 @@ export class UpdateProductDto {
   @IsOptional()
   @IsNumber()
   price: number;
-
-  @ApiProperty({ example: 'example.jpg' })
-  @IsOptional()
-  @IsString()
-  photo: string;
 
   @ApiProperty({ example: 'some car' })
   @IsOptional()

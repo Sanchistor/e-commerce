@@ -13,6 +13,6 @@ export class ProductOrder {
     @ManyToOne(()=>Order, (order)=>order.productToOrder, {onDelete: "CASCADE"})
     order: Order;
 
-    @ManyToOne(()=>Product, (product)=>product.orderToProduct)
+    @ManyToOne(()=>Product, (product)=>product.orderToProduct, {onDelete: "CASCADE"})
     product: Product;
 }

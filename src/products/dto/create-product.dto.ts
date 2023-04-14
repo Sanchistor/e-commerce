@@ -9,20 +9,12 @@ export class CreateProductDto {
   name: string;
 
   @IsString()
-  @ApiProperty({ example: 't2g543k5' })
-  vendorCode: string;
-
-  @IsString()
   @ApiProperty({ example: '1kg' })
   weight: string;
 
   @IsNumber()
   @ApiProperty({ example: 1000 })
   price: number;
-
-  @IsString()
-  @ApiProperty({ example: 'photo.png' })
-  photo: string;
 
   @IsString()
   @ApiProperty({ example: 'Cool iphone' })

@@ -12,7 +12,7 @@ export class FilesService {
     private fileRepository: Repository<FileEntity>,
   ) {}
 
-  async uploadFile(file): Promise<FileEntity> {
+  async uploadFile(file: any): Promise<FileEntity> {
     if (!file) {
       throw new HttpException(
         {
@@ -33,6 +33,9 @@ export class FilesService {
     return this.fileRepository.save(
       this.fileRepository.create({
         path: path[this.configService.get('file.driver')],
+        type: file.location.match(/\.[0-9a-z]+$/i)[0].substring(1),
+        name: file.originalname,
+        size: file.size,
       }),
     );
   }

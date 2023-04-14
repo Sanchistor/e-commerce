@@ -9,6 +9,7 @@ import {
 import { Category } from '../../categories/entities/category.entity';
 import { ProductAttributesToProductsEntity } from './product-attributes-to-products.entity';
 import {ProductOrder} from "../../order/entities/product-order.entity";
+import {FileEntity} from "../../files/entities/file.entity";
 
 @Entity()
 export class Product {
@@ -30,8 +31,8 @@ export class Product {
   })
   price: number;
 
-  @Column()
-  photo: string;
+  @OneToMany(() => FileEntity, (photo) => photo.product)
+  photo: FileEntity[];
 
   @Column()
   description: string;
@@ -49,6 +50,8 @@ export class Product {
   )
   productToAttribute: ProductAttributesToProductsEntity[];
 
-  @OneToMany(() => ProductOrder, (order) => order.product)
+  @OneToMany(() => ProductOrder, (order) => order.product, {
+    onDelete: 'CASCADE',
+  })
   orderToProduct: ProductOrder[];
 }

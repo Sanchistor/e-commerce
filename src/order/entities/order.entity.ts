@@ -6,7 +6,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
-import {ProductOrder} from "./product-order.entity";
+import { ProductOrder } from './product-order.entity';
 
 @Entity()
 export class Order {
@@ -27,7 +27,9 @@ export class Order {
   })
   user: User;
 
-  @OneToMany(() => ProductOrder, (product) => product.order)
+  @OneToMany(() => ProductOrder, (product) => product.order, {
+    onDelete: 'CASCADE',
+  })
   productToOrder: ProductOrder[];
 
   @CreateDateColumn()
