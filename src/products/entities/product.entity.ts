@@ -8,8 +8,8 @@ import {
 } from 'typeorm';
 import { Category } from '../../categories/entities/category.entity';
 import { ProductAttributesToProductsEntity } from './product-attributes-to-products.entity';
-import {ProductOrder} from "../../order/entities/product-order.entity";
-import {FileEntity} from "../../files/entities/file.entity";
+import { ProductOrder } from '../../order/entities/product-order.entity';
+import { FileEntity } from '../../files/entities/file.entity';
 
 @Entity()
 export class Product {
@@ -23,7 +23,7 @@ export class Product {
   vendorCode: string;
 
   @Column({ length: 10 })
-  weight: string;
+  language: string;
 
   @Column('decimal', {
     precision: 8,
@@ -39,6 +39,9 @@ export class Product {
 
   @Column()
   size: string;
+
+  @Column()
+  year: number;
 
   @ManyToMany(() => Category, (category) => category.product)
   @JoinTable()

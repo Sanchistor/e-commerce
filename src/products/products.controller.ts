@@ -40,6 +40,11 @@ export class ProductsController {
     return await this.productService.deletePhotoFromS3(id);
   }
 
+  @Get('getSimilarProducts/:id')
+  async getSimilarProducts(@Param('id') id: string){
+      return await this.productService.getSimilarProducts(id);
+  }
+
   @Get()
   async findAll() {
     return await this.productService.findAll();

@@ -51,7 +51,8 @@ export class ProductsService {
   generateRandomCode() {
     const length = 5;
     let code = '';
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const characters =
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     for (let i = 0; i < length; i++) {
       code += characters.charAt(Math.floor(Math.random() * characters.length));
     }
@@ -156,5 +157,39 @@ export class ProductsService {
     });
 
     return await this.fileRepository.delete({ id: product.photo[0].id });
+  }
+
+  async getSimilarProducts(productId: string) {
+    const product = await this.findOne(productId);
+
+    const allProducts = await this.productRepository
+      .createQueryBuilder('product')
+      .leftJoinAndSelect('product.productToAttribute', 'productToAttribute')
+      .where('product.id != :id', { id: productId })
+      .getMany();
+
+    const similarityMap = allProducts.map((p) => {
+      let similarity =
+        (product.language === p.language ? 1 : 0) +
+        (Math.abs(product.price - p.price) <= 200 ? 1 : 0) +
+        (Math.abs(product.year - p.year) <= 5 ? 1 : 0);
+
+      p.productToAttribute.forEach((attribute) => {
+        const attributeValue = attribute.value;
+
+        if (
+          product.productToAttribute.some((a) => a.value === attributeValue)
+        ) {
+          similarity++;
+        }
+      });
+      return { product: p, similarity };
+    });
+
+    const sortedProducts = similarityMap.sort(
+      (a, b) => b.similarity - a.similarity,
+    );
+
+    return sortedProducts.slice(0, 12).map((p) => p.product);
   }
 }

@@ -9,12 +9,16 @@ export class CreateProductDto {
   name: string;
 
   @IsString()
-  @ApiProperty({ example: '1kg' })
-  weight: string;
+  @ApiProperty({ example: 'English' })
+  language: string;
 
   @IsNumber()
   @ApiProperty({ example: 1000 })
   price: number;
+
+  @IsNumber()
+  @ApiProperty({ example: 2016 })
+  year: number;
 
   @IsString()
   @ApiProperty({ example: 'Cool iphone' })

@@ -9,15 +9,20 @@ export class UpdateProductDto {
   @IsString()
   name: string;
 
-  @ApiProperty({ example: '7577' })
+  @ApiProperty({ example: 'German' })
   @IsOptional()
   @IsString()
-  weight: string;
+  language: string;
 
   @ApiProperty({ example: 63757 })
   @IsOptional()
   @IsNumber()
   price: number;
+
+  @ApiProperty({ example: 2019 })
+  @IsOptional()
+  @IsNumber()
+  year: number;
 
   @ApiProperty({ example: 'some car' })
   @IsOptional()
