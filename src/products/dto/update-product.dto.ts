@@ -24,6 +24,10 @@ export class UpdateProductDto {
   @IsNumber()
   year: number;
 
+  @IsString()
+  @ApiProperty({ example: 'Lana del Ray' })
+  author: string;
+
   @ApiProperty({ example: 'some car' })
   @IsOptional()
   @IsString()

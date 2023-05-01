@@ -21,6 +21,10 @@ export class CreateProductDto {
   year: number;
 
   @IsString()
+  @ApiProperty({ example: 'Lana del Ray' })
+  author: string;
+
+  @IsString()
   @ApiProperty({ example: 'Cool iphone' })
   description: string;
 

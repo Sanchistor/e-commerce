@@ -25,6 +25,9 @@ export class Product {
   @Column({ length: 10 })
   language: string;
 
+  @Column({ default: ' ' })
+  author: string;
+
   @Column('decimal', {
     precision: 8,
     scale: 2,

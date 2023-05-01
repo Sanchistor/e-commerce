@@ -20,7 +20,13 @@ export class ProductsService {
   ) {}
 
   async findAll() {
-    return await this.productRepository.find();
+    return await this.productRepository
+        .createQueryBuilder('product')
+        .leftJoinAndSelect('product.category', 'category')
+        .leftJoinAndSelect('product.productToAttribute', 'attribute')
+        .leftJoinAndSelect('product.photo', 'photo')
+        .select(['product', 'category', 'attribute', 'photo.path'])
+        .getMany();
   }
 
   async findManyByIds(arrayOfIds: Array<string>) {
