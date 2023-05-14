@@ -46,5 +46,5 @@ jobs:
             docker rmi -f $(docker image ls -a -q)
             docker rm $(docker ps -a -f status=exited -q)
             docker login ghcr.io -u $GITHUB_USERNAME -p $GITHUB_TOKEN
-            docker pull ghcr.io/Sanchistor/e-commerce/api:latest
+            docker pull ghcr.io/sanchistor/e-commerce/api:latest
             docker-compose -f docker-compose.ci.yaml --env-file .env up -d
