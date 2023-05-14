@@ -1,10 +1,43 @@
+version: '3.6'
+
 services:
+  postgres:
+    image: postgres:14.2
+    container_name: postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - backend
+    expose:
+      - 5432
+    ports:
+      - 5432
+    environment:
+      POSTGRES_USER: ${DATABASE_USERNAME}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      POSTGRES_DB: ${DATABASE_NAME}
+
   api:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: ghcr.io/sanchistor/e-commerce/api:latest
+    container_name: backend
+    restart: on-failure
     env_file:
       - .env
+    build:
+      context: .
+      target: development
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    command: npm run start:prod
     ports:
       - 3000:3000
       - 9229:9229
+    networks:
+      - backend
+    depends_on:
+      - postgres
+
+networks:
+  backend:
+    driver: bridge
