@@ -1,0 +1,50 @@
+name: ecommerce CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Publish to Github Packages Registry
+        uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          name: Sanchistor/e-commerce/api
+          registry: ghcr.io
+          username: "root"
+          password: ${{ secrets.GITHUB_TOKEN }}
+          dockerfile: Dockerfile
+          tags: latest
+      - name: Copy compose-file to digitalocean
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.DO_HOST }}
+          username: ${{ secrets.DO_USERNAME }}
+          password: ${{ secrets.DO_PASSWORD }}
+          port: ${{ secrets.DO_PORT }}
+          source: "docker-compose.ci.yaml"
+          target: "/root"
+      - name: Deploy package to digitalocean
+        uses: appleboy/ssh-action@master
+        env:
+          GITHUB_USERNAME: "root"
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          host: ${{ secrets.DO_HOST }}
+          username: ${{ secrets.DO_USERNAME }}
+          password: ${{ secrets.DO_PASSWORD }}
+          port: ${{ secrets.DO_PORT }}
+          envs: GITHUB_USERNAME, GITHUB_TOKEN
+          script: |
+            docker-compose down
+            docker rmi -f $(docker image ls -a -q)
+            docker rm $(docker ps -a -f status=exited -q)
+            docker login ghcr.io -u $GITHUB_USERNAME -p $GITHUB_TOKEN
+            docker pull ghcr.io/Sanchistor/e-commerce/api:latest
+            docker-compose -f docker-compose.ci.yaml --env-file .env up -d
